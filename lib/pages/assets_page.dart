@@ -69,54 +69,56 @@ class _AssetsPageState extends State<AssetsPage> {
         child: CircularProgressIndicator(),
       )
           : SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          columnSpacing: 15,
-          columns: [
-            DataColumn(label: Text('Coin')),
-            DataColumn(label: Text('Balance')),
-            DataColumn(label: Text('Price')),
-            DataColumn(label: Text('Value \$')),
-          ],
-          rows: filteredAssets.map((asset) {
-            final symbol = asset.key;
-            final balance = originalAssets[symbol]?.toStringAsFixed(4) ?? '';
-            final price = symbol == 'USDT' ? '1.0' : (prices[symbol] ?? 0.0).toStringAsFixed(4);
-            final value = asset.value.toStringAsFixed(2);
-
-            return DataRow(
-              cells: [
-                DataCell(
-                  Text(
-                    symbol,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
-                    overflow: TextOverflow.ellipsis,
+            child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+            columnSpacing: 15,
+            columns: [
+              DataColumn(label: Text('Coin')),
+              DataColumn(label: Text('Balance')),
+              DataColumn(label: Text('Price')),
+              DataColumn(label: Text('Value \$')),
+            ],
+            rows: filteredAssets.map((asset) {
+              final symbol = asset.key;
+              final balance = originalAssets[symbol]?.toStringAsFixed(4) ?? '';
+              final price = symbol == 'USDT' ? '1.0' : (prices[symbol] ?? 0.0).toStringAsFixed(4);
+              final value = asset.value.toStringAsFixed(2);
+            
+              return DataRow(
+                cells: [
+                  DataCell(
+                    Text(
+                      symbol,
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                DataCell(
-                  Text(
-                    balance,
-                    overflow: TextOverflow.ellipsis,
+                  DataCell(
+                    Text(
+                      balance,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                DataCell(
-                  Text(
-                    price,
-                    overflow: TextOverflow.ellipsis,
+                  DataCell(
+                    Text(
+                      price,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                DataCell(
-                  Text(
-                    value,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                    overflow: TextOverflow.clip,
+                  DataCell(
+                    Text(
+                      value,
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                      overflow: TextOverflow.clip,
+                    ),
                   ),
-                ),
-              ],
-            );
-          }).toList(),
-        ),
-      ),
+                ],
+              );
+            }).toList(),
+                    ),
+                  ),
+          ),
     );
   }
 }
