@@ -72,7 +72,7 @@ class _AssetsPageState extends State<AssetsPage> {
             child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
-            columnSpacing: 15,
+            columnSpacing: 10,
             columns: [
               DataColumn(label: Text('Coin')),
               DataColumn(label: Text('Balance')),
@@ -80,9 +80,10 @@ class _AssetsPageState extends State<AssetsPage> {
               DataColumn(label: Text('Value \$')),
             ],
             rows: filteredAssets.map((asset) {
-              final symbol = asset.key;
-              final balance = originalAssets[symbol]?.toStringAsFixed(4) ?? '';
-              final price = symbol == 'USDT' ? '1.0' : (prices[symbol] ?? 0.0).toStringAsFixed(4);
+              print(asset.key);
+              final symbol = asset.key != 'USDT'? prices[asset.key]!>0.001?asset.key:"1000${asset.key}":asset.key;
+              final balance = originalAssets[asset.key]?.toStringAsFixed(4) ?? '';
+              final price = asset.key == 'USDT' ? '1.0' : ((prices[asset.key]!>0.001?prices[asset.key]:prices[asset.key]!*1000) ?? 0.0).toStringAsFixed(4);
               final value = asset.value.toStringAsFixed(2);
             
               return DataRow(
