@@ -223,7 +223,7 @@ Future<double> getTotalBalance() async {
         final String symbol = asset['asset'];
         final double free = double.parse(asset['free']);
         final double locked = double.parse(asset['locked']);
-        final double balanceInUSD = (free + locked) * (prices[symbol.toString()+"USDT"] ?? 0.0);
+        final double balanceInUSD = (free + locked) * (prices["${symbol}USDT"] ?? 0.0);
         totalBalanceUSD += balanceInUSD;
       }
       return totalBalanceUSD;

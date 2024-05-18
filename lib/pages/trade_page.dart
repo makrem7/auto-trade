@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:ffi';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:autotrade/services/trade_logic.dart'; // Importing your trade logic file
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,7 +9,7 @@ import 'assets_page.dart';
 class TradePage extends StatefulWidget {
   final Map<String, dynamic> balance;
 
-  TradePage({required this.balance});
+  const TradePage({super.key, required this.balance});
 
   @override
   _TradePageState createState() => _TradePageState();
@@ -26,10 +24,8 @@ class _TradePageState extends State<TradePage> {
   // Method to fetch total balance
   Future<void> fetchTotalBalance() async {
     if (_disposed) return;
-    double freeBalanceUSDT =
-        await getFreeBalance();
-    double totalBalanceUSD =
-        await getTotalBalance();
+    double freeBalanceUSDT = await getFreeBalance();
+    double totalBalanceUSD = await getTotalBalance();
     setState(() {
       totalBalance = totalBalanceUSD + freeBalanceUSDT;
       freeBalance = freeBalanceUSDT;
@@ -60,8 +56,7 @@ class _TradePageState extends State<TradePage> {
   TextEditingController target2Controller = TextEditingController();
   TextEditingController target3Controller = TextEditingController();
   TextEditingController pairController = TextEditingController();
-  TextEditingController usdtAmountController =
-      TextEditingController(text: '20');
+  TextEditingController usdtAmountController = TextEditingController(text: '20');
 
   Future<void> _showLogoutDialog(BuildContext context) async {
     return showDialog<void>(
@@ -155,223 +150,278 @@ class _TradePageState extends State<TradePage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('api_key');
     await prefs.remove('api_secret');
-    Navigator.pushReplacementNamed(
-        context, '/login'); // Assuming '/login' is your login route
+    Navigator.pushReplacementNamed(context, '/login'); // Assuming '/login' is your login route
   }
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    double fontSize(double size) {
+      return size * screenWidth / 375; // Assuming 375 is the base width
+    }
+
+    double paddingSize(double size) {
+      return size * screenWidth / 375;
+    }
+
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Auto Trade'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: fetchTotalBalance,
-            ),
-            SizedBox(width: 10,),
-            IconButton(
-              icon: Icon(Icons.exit_to_app),
-              onPressed: () => _showLogoutDialog(context),
-            ),
-          ],
+      appBar: AppBar(
+        backgroundColor: Colors.grey.withOpacity(0.1),
+        title: Padding(
+          padding: EdgeInsets.only(left:   paddingSize(20)),
+          child: Text(
+            'Auto Trade',
+            style: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.9)),
+
+          ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    TextFormField(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: fetchTotalBalance,
+            iconSize: paddingSize(20),
+          ),
+          SizedBox(width: paddingSize(10)),
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: () => _showLogoutDialog(context),
+            iconSize: paddingSize(20),
+          ),
+          SizedBox(width: paddingSize(20)),
+
+        ],
+      ),
+      body: Container(
+        height: screenHeight,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.grey.withOpacity(0.1), Colors.blue.withOpacity(0.1)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        padding: EdgeInsets.all(paddingSize(20.0)),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  buildTextFormField(
                       controller: pairController,
-                      decoration: InputDecoration(
-                        labelText: 'Trading COIN SYMBOL',
-                        filled: true,
-                        fillColor: Colors.black.withOpacity(0.08),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    TextFormField(
+                      labelText: 'Trading COIN SYMBOL',
+                      fillColor: Colors.blue.withOpacity(0.1)
+                  ),
+                  SizedBox(height: paddingSize(10)),
+                  buildTextFormField(
                       controller: entryController,
-                      decoration: InputDecoration(
-                        labelText: 'Entry Price',
-                        filled: true,
-                        fillColor: Colors.blue.withOpacity(0.08),
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: TextFormField(
+                      labelText: 'Entry Price',
+                      fillColor: Colors.blue.withOpacity(0.1),
+                      keyboardType: TextInputType.number
+                  ),
+                  SizedBox(height: paddingSize(10)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: buildTextFormField(
                             controller: target1Controller,
-                            decoration: InputDecoration(
-                              labelText: 'Target 1',
-                              filled: true,
-                              fillColor: Colors.green.withOpacity(0.08),
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
+                            labelText: 'Target 1',
+                            fillColor: Colors.green.withOpacity(0.1),
+                            keyboardType: TextInputType.number
                         ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: TextFormField(
+                      ),
+                      SizedBox(width: paddingSize(10)),
+                      Expanded(
+                        child: buildTextFormField(
                             controller: target2Controller,
-                            decoration: InputDecoration(
-                              labelText: 'Target 2',
-                              filled: true,
-                              fillColor: Colors.green.withOpacity(0.08),
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
+                            labelText: 'Target 2',
+                            fillColor: Colors.green.withOpacity(0.1),
+                            keyboardType: TextInputType.number
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: TextFormField(
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: paddingSize(10)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: buildTextFormField(
                             controller: target3Controller,
-                            decoration: InputDecoration(
-                              labelText: 'Target 3',
-                              filled: true,
-                              fillColor: Colors.green.withOpacity(0.08),
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
+                            labelText: 'Target 3',
+                            fillColor: Colors.green.withOpacity(0.1),
+                            keyboardType: TextInputType.number
                         ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: TextFormField(
+                      ),
+                      SizedBox(width: paddingSize(10)),
+                      Expanded(
+                        child: buildTextFormField(
                             controller: stopLossController,
-                            decoration: InputDecoration(
-                              labelText: 'Stop Loss',
-                              filled: true,
-                              fillColor: Colors.red.withOpacity(0.08),
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
+                            labelText: 'Stop Loss',
+                            fillColor: Colors.red.withOpacity(0.1),
+                            keyboardType: TextInputType.number
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    TextFormField(
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: paddingSize(10)),
+                  buildTextFormField(
                       controller: usdtAmountController,
-                      decoration: InputDecoration(
-                        labelText: 'Amount in USDT',
-                        filled: true,
-                        fillColor: Colors.orange.withOpacity(0.08),
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        int toStringAsFixed = 5;
-                        String result = "";
-                        while ((result == "" || result == "LOT_SIZE") &&
-                            toStringAsFixed >= 0) {
-                          result = await executeTrade(
-                            "${pairController.text.toUpperCase()}USDT",
-                            'BUY',
-                            'LIMIT',
-                            'GTC',
-                            (double.tryParse(usdtAmountController.text)! /
-                                    double.tryParse(entryController.text)!)
-                                .toStringAsFixed(toStringAsFixed),
-                            entryController.text,
-                          );
-                          print(
-                              "#\n\n${(double.tryParse(usdtAmountController.text)! / double.tryParse(entryController.text)!).toStringAsFixed(toStringAsFixed)}    ${toStringAsFixed}");
-                          toStringAsFixed -= 1;
-                          if (result == "success") {
-                            _showSuccessDialog(context);
-                          } else if (result == "failure") {
-                            _showFailureDialog(context);
-                          }
+                      labelText: 'Amount in USDT',
+                      fillColor: Colors.blue.withOpacity(0.1),
+                      keyboardType: TextInputType.number
+                  ),
+                  SizedBox(height: paddingSize(20)),
+                  ElevatedButton(
+                    onPressed: () async {
+                      int toStringAsFixed = 5;
+                      String result = "";
+                      while ((result == "" || result == "LOT_SIZE") &&
+                          toStringAsFixed >= 0) {
+                        result = await executeTrade(
+                          "${pairController.text.toUpperCase()}USDT",
+                          'BUY',
+                          'LIMIT',
+                          'GTC',
+                          (double.tryParse(usdtAmountController.text)! /
+                              double.tryParse(entryController.text)!)
+                              .toStringAsFixed(toStringAsFixed),
+                          entryController.text,
+                        );
+                        print(
+                            "#\n\n${(double.tryParse(usdtAmountController.text)! / double.tryParse(entryController.text)!).toStringAsFixed(toStringAsFixed)}    $toStringAsFixed");
+                        toStringAsFixed -= 1;
+                        if (result == "success") {
+                          _showSuccessDialog(context);
+                        } else if (result == "failure") {
+                          _showFailureDialog(context);
                         }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.black.withOpacity(0.2),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text('Execute Trade'),
-                      ),
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.blue.withOpacity(0.5),
                     ),
-                  ],
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AssetsPage()),
-                    );
-                  },
-                  child: Container(
-                    margin:EdgeInsets.only(top:20),
-                    color: Colors.grey[200], // Background color
-                    padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Total Balance: ',
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              'Available for Trading: ',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${totalBalance.toStringAsFixed(2)} USD',
-                              style: const TextStyle(
-                                color: Colors.blue,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              '${freeBalance.toStringAsFixed(2)} USDT',
-                              style: const TextStyle(
-                                color: Colors.green,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                    child: Padding(
+                      padding: EdgeInsets.all(paddingSize(16.0)),
+                      child: Text(
+                          'Execute Trade',
+                        style: TextStyle(fontSize: fontSize(16), color: Colors.white.withOpacity(0.9)),
+                      ),
                     ),
                   ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AssetsPage()),
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1), // Background color
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.blue.withOpacity(0.08),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  margin: EdgeInsets.only(top: paddingSize(20)),
+                  padding: EdgeInsets.symmetric(
+                      vertical: paddingSize(20.0), horizontal: paddingSize(40.0)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Total Balance: ',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: fontSize(14.0),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Available for Trading: ',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: fontSize(14.0),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${totalBalance.toStringAsFixed(2)} USD',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: fontSize(14.0),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '${freeBalance.toStringAsFixed(2)} USDT',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: fontSize(14.0),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
+  }
+
+
+  TextFormField buildTextFormField({
+    required TextEditingController controller,
+    required String labelText,
+    required Color fillColor,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    double fontSize(double size) {
+      return size * screenWidth / 375; // Assuming 375 is the base width
+    }
+
+    double paddingSize(double size) {
+      return size * screenWidth / 375;
+    }
+    return TextFormField(
+      style: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.9)),
+      controller: controller,
+      decoration: InputDecoration(
+        labelStyle: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.6),fontStyle: FontStyle.italic),
+        labelText: labelText,
+        filled: true,
+        fillColor: fillColor,
+      ),
+      keyboardType: keyboardType,
+    );
   }
 }

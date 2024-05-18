@@ -4,10 +4,12 @@ import 'package:autotrade/pages/trade_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,8 +21,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const AuthenticationWrapper(),
-        '/login': (context) => LoginPage(),
-        '/trade': (context) => TradePage(balance: {},),
+        '/login': (context) => const LoginPage(),
+        '/trade': (context) => const TradePage(balance: {},),
       },
     );
   }
@@ -43,9 +45,9 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
           return const CircularProgressIndicator(); // Or some loading indicator
         } else {
           if (snapshot.data == true) {
-            return TradePage(balance: const {},); // Navigate to trade page if logged in
+            return const TradePage(balance: {},); // Navigate to trade page if logged in
           } else {
-            return LoginPage(); // Navigate to login page if not logged in
+            return const LoginPage(); // Navigate to login page if not logged in
           }
         }
       },

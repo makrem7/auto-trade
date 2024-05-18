@@ -2,6 +2,13 @@
 
 AutoTrade is a Flutter application designed to streamline the process of executing trading signals on the Binance platform. With the integration of the Binance API, traders can automate their entire trading process, reducing configuration time from minutes to seconds.
 
+## Screenshots
+
+![Screenshot 1](screenshots/1.png)
+![Screenshot 2](screenshots/2.png)
+![Screenshot 3](screenshots/3.png)
+![Screenshot 4](screenshots/4.png)
+
 ## Features
 
 - **Automation:** Execute trades seamlessly with minimal manual intervention.
