@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:autotrade/services/login_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -89,8 +90,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = kIsWeb? screenHeight/2 : MediaQuery.of(context).size.width;
 
     double fontSize(double size) {
       return size * screenWidth / 375; // Assuming 375 is the base width
@@ -100,111 +101,116 @@ class _LoginPageState extends State<LoginPage> {
       return size * screenWidth / 375;
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.grey.withOpacity(0.1),
-        title: Center(
-          child: GradientText(
-            'AutoTrade',
-            gradient: const LinearGradient(
-              colors: [Colors.blue, Colors.purple],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            style: TextStyle(
-              fontSize: fontSize(35),
-              fontFamily: 'CoolFont',
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          height: screenHeight,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.grey.withOpacity(0.1), Colors.blue.withOpacity(0.1)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+    return Center(
+      child: SizedBox(
+        width:screenWidth,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.grey.withOpacity(0.1),
+            title: Center(
+              child: GradientText(
+                'AutoTrade',
+                gradient: const LinearGradient(
+                  colors: [Colors.blue, Colors.purple],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                style: TextStyle(
+                  fontSize: fontSize(30),
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
-          padding: EdgeInsets.all(paddingSize(20.0)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(bottom: paddingSize(50.0), top: paddingSize(50.0)),
-                child: Center(
-                  child: GradientText(
-                    'Login with your\nAPI Key & API Secret\nAnd trade faster and easier',
-                    gradient: const LinearGradient(
-                      colors: [Colors.blue, Colors.purple, Colors.red],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+          body: SingleChildScrollView(
+            child: Container(
+              height: screenHeight,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.grey.withOpacity(0.1), Colors.blue.withOpacity(0.1)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              padding: EdgeInsets.all(paddingSize(20.0)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: paddingSize(50.0), top: paddingSize(50.0)),
+                    child: Center(
+                      child: GradientText(
+                        'Login with your\nAPI Key & API Secret\nAnd trade faster and easier',
+                        gradient: const LinearGradient(
+                          colors: [Colors.blue, Colors.purple, Colors.red],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        style: TextStyle(
+                          fontSize: fontSize(22),
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                    style: TextStyle(
-                      fontSize: fontSize(22),
-                      fontWeight: FontWeight.bold,
+                  ),
+                  // SizedBox(height: paddingSize(180)),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: paddingSize(30)),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.blue.withOpacity(0.2),
                     ),
-                    textAlign: TextAlign.center,
+                    child: TextField(
+                      style: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.9),fontStyle: FontStyle.italic),
+                      controller: apiKeyController,
+                      decoration: InputDecoration(
+                        labelStyle: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.6),fontStyle: FontStyle.italic),
+                        labelText: 'API Key',
+                        border: InputBorder.none,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: paddingSize(30)),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.blue.withOpacity(0.2),
-                ),
-                child: TextField(
-                  style: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.9),fontStyle: FontStyle.italic),
-                  controller: apiKeyController,
-                  decoration: InputDecoration(
-                    labelStyle: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.6),fontStyle: FontStyle.italic),
-                    labelText: 'API Key',
-                    border: InputBorder.none,
+                  SizedBox(height: paddingSize(40)),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: paddingSize(30)),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.blue.withOpacity(0.2),
+                    ),
+                    child: TextField(
+                      style: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.9),fontStyle: FontStyle.italic),
+                      controller: apiSecretController,
+                      decoration: InputDecoration(
+                        labelStyle: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.6),fontStyle: FontStyle.italic),
+                        labelText: 'API Secret',
+                        border: InputBorder.none,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              SizedBox(height: paddingSize(40)),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: paddingSize(30)),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.blue.withOpacity(0.2),
-                ),
-                child: TextField(
-                  style: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.9),fontStyle: FontStyle.italic),
-                  controller: apiSecretController,
-                  decoration: InputDecoration(
-                    labelStyle: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.6),fontStyle: FontStyle.italic),
-                    labelText: 'API Secret',
-                    border: InputBorder.none,
+                  SizedBox(height: paddingSize(40)),
+                  ElevatedButton(
+                    onPressed: _login,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.withOpacity(0.5),
+                      padding: EdgeInsets.symmetric(horizontal: paddingSize(40), vertical: paddingSize(15)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      '       Login       ',
+                      style: TextStyle(fontSize: fontSize(18), color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
+                  SizedBox(height: paddingSize(40)),
+                ],
               ),
-              SizedBox(height: paddingSize(40)),
-              ElevatedButton(
-                onPressed: _login,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.withOpacity(0.5),
-                  padding: EdgeInsets.symmetric(horizontal: paddingSize(40), vertical: paddingSize(15)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  '       Login       ',
-                  style: TextStyle(fontSize: fontSize(18), color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(height: paddingSize(40)),
-            ],
-          ),
 
+            ),
+          ),
         ),
       ),
     );
@@ -235,7 +241,7 @@ class GradientText extends StatelessWidget {
       child: Text(
         text,
         textAlign: textAlign,
-        style: style.copyWith(color: Colors.white, fontStyle: FontStyle.italic),
+        style: style.copyWith(color: Colors.white, fontStyle: FontStyle.normal),
       ),
     );
   }
