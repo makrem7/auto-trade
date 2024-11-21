@@ -66,7 +66,7 @@ class _TradePageState extends State<TradePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirm Logout'),
-          content: const SingleChildScrollView(
+          content:  SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Text('Are you sure you want to logout?'),
@@ -100,7 +100,7 @@ class _TradePageState extends State<TradePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Order Failed'),
-          content: const SingleChildScrollView(
+          content:  SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Text('Order Failed Try again later'),
@@ -127,7 +127,7 @@ class _TradePageState extends State<TradePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Order Success'),
-          content: const SingleChildScrollView(
+          content:  SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Text('Order Successfully placed, check your binance account'),
@@ -168,231 +168,234 @@ class _TradePageState extends State<TradePage> {
     }
 
     return Center(
-      child: SizedBox(
-        width:screenWidth,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.grey.withOpacity(0.1),
-            title: Padding(
-              padding: EdgeInsets.only(left:   paddingSize(20)),
-              child: Text(
-                'Auto Trade',
-                style: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.9)),
+      child: RefreshIndicator(
+        onRefresh: fetchTotalBalance,
+        child: SizedBox(
+          width:screenWidth,
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.grey.withOpacity(0.1),
+              title: Padding(
+                padding: EdgeInsets.only(left:   paddingSize(20)),
+                child: Text(
+                  'Auto Trade',
+                  style: TextStyle(fontSize: fontSize(16), color: Colors.black.withOpacity(0.9)),
 
+                ),
               ),
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: fetchTotalBalance,
-                iconSize: paddingSize(20),
-              ),
-              SizedBox(width: paddingSize(10)),
-              IconButton(
-                icon: const Icon(Icons.exit_to_app),
-                onPressed: () => _showLogoutDialog(context),
-                iconSize: paddingSize(20),
-              ),
-              SizedBox(width: paddingSize(20)),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: fetchTotalBalance,
+                  iconSize: paddingSize(20),
+                ),
+                SizedBox(width: paddingSize(10)),
+                IconButton(
+                  icon: const Icon(Icons.exit_to_app),
+                  onPressed: () => _showLogoutDialog(context),
+                  iconSize: paddingSize(20),
+                ),
+                SizedBox(width: paddingSize(20)),
 
-            ],
-          ),
-          body: Container(
-            height: screenHeight,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.grey.withOpacity(0.1), Colors.blue.withOpacity(0.1)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              ],
             ),
-            padding: EdgeInsets.all(paddingSize(20.0)),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      buildTextFormField(
-                          controller: pairController,
-                          labelText: 'Trading COIN SYMBOL',
-                          fillColor: Colors.blue.withOpacity(0.1)
-                      ),
-                      SizedBox(height: paddingSize(10)),
-                      buildTextFormField(
-                          controller: entryController,
-                          labelText: 'Entry Price',
-                          fillColor: Colors.blue.withOpacity(0.1),
-                          keyboardType: TextInputType.number
-                      ),
-                      SizedBox(height: paddingSize(10)),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: buildTextFormField(
-                                controller: target1Controller,
-                                labelText: 'Target 1',
-                                fillColor: Colors.green.withOpacity(0.1),
-                                keyboardType: TextInputType.number
+            body: Container(
+              height: screenHeight,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.grey.withOpacity(0.1), Colors.blue.withOpacity(0.1)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              padding: EdgeInsets.all(paddingSize(20.0)),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        buildTextFormField(
+                            controller: pairController,
+                            labelText: 'Trading COIN SYMBOL',
+                            fillColor: Colors.blue.withOpacity(0.1)
+                        ),
+                        SizedBox(height: paddingSize(10)),
+                        buildTextFormField(
+                            controller: entryController,
+                            labelText: 'Entry Price',
+                            fillColor: Colors.blue.withOpacity(0.1),
+                            keyboardType: TextInputType.number
+                        ),
+                        SizedBox(height: paddingSize(10)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: buildTextFormField(
+                                  controller: target1Controller,
+                                  labelText: 'Target 1',
+                                  fillColor: Colors.green.withOpacity(0.1),
+                                  keyboardType: TextInputType.number
+                              ),
                             ),
-                          ),
-                          SizedBox(width: paddingSize(10)),
-                          Expanded(
-                            child: buildTextFormField(
-                                controller: target2Controller,
-                                labelText: 'Target 2',
-                                fillColor: Colors.green.withOpacity(0.1),
-                                keyboardType: TextInputType.number
+                            SizedBox(width: paddingSize(10)),
+                            Expanded(
+                              child: buildTextFormField(
+                                  controller: target2Controller,
+                                  labelText: 'Target 2',
+                                  fillColor: Colors.green.withOpacity(0.1),
+                                  keyboardType: TextInputType.number
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: paddingSize(10)),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: buildTextFormField(
-                                controller: target3Controller,
-                                labelText: 'Target 3',
-                                fillColor: Colors.green.withOpacity(0.1),
-                                keyboardType: TextInputType.number
+                          ],
+                        ),
+                        SizedBox(height: paddingSize(10)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: buildTextFormField(
+                                  controller: target3Controller,
+                                  labelText: 'Target 3',
+                                  fillColor: Colors.green.withOpacity(0.1),
+                                  keyboardType: TextInputType.number
+                              ),
                             ),
-                          ),
-                          SizedBox(width: paddingSize(10)),
-                          Expanded(
-                            child: buildTextFormField(
-                                controller: stopLossController,
-                                labelText: 'Stop Loss',
-                                fillColor: Colors.red.withOpacity(0.1),
-                                keyboardType: TextInputType.number
+                            SizedBox(width: paddingSize(10)),
+                            Expanded(
+                              child: buildTextFormField(
+                                  controller: stopLossController,
+                                  labelText: 'Stop Loss',
+                                  fillColor: Colors.red.withOpacity(0.1),
+                                  keyboardType: TextInputType.number
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: paddingSize(10)),
-                      buildTextFormField(
-                          controller: usdtAmountController,
-                          labelText: 'Amount in USDT',
-                          fillColor: Colors.blue.withOpacity(0.1),
-                          keyboardType: TextInputType.number
-                      ),
-                      SizedBox(height: paddingSize(20)),
-                      ElevatedButton(
-                        onPressed: () async {
-                          int toStringAsFixed = 5;
-                          String result = "";
-                          while ((result == "" || result == "LOT_SIZE") &&
-                              toStringAsFixed >= 0) {
-                            result = await executeTrade(
-                              "${pairController.text.toUpperCase()}USDT",
-                              'BUY',
-                              'LIMIT',
-                              'GTC',
-                              (double.tryParse(usdtAmountController.text)! /
-                                  double.tryParse(entryController.text)!)
-                                  .toStringAsFixed(toStringAsFixed),
-                              entryController.text,
-                            );
-                            print(
-                                "#\n\n${(double.tryParse(usdtAmountController.text)! / double.tryParse(entryController.text)!).toStringAsFixed(toStringAsFixed)}    $toStringAsFixed");
-                            toStringAsFixed -= 1;
-                            if (result == "success") {
-                              _showSuccessDialog(context);
-                            } else if (result == "failure") {
-                              _showFailureDialog(context);
+                          ],
+                        ),
+                        SizedBox(height: paddingSize(10)),
+                        buildTextFormField(
+                            controller: usdtAmountController,
+                            labelText: 'Amount in USDT',
+                            fillColor: Colors.blue.withOpacity(0.1),
+                            keyboardType: TextInputType.number
+                        ),
+                        SizedBox(height: paddingSize(20)),
+                        ElevatedButton(
+                          onPressed: () async {
+                            int toStringAsFixed = 5;
+                            String result = "";
+                            while ((result == "" || result == "LOT_SIZE") &&
+                                toStringAsFixed >= 0) {
+                              result = await executeTrade(
+                                "${pairController.text.toUpperCase()}USDT",
+                                'BUY',
+                                'LIMIT',
+                                'GTC',
+                                (double.tryParse(usdtAmountController.text)! /
+                                    double.tryParse(entryController.text)!)
+                                    .toStringAsFixed(toStringAsFixed),
+                                entryController.text,
+                              );
+                              print(
+                                  "#\n\n${(double.tryParse(usdtAmountController.text)! / double.tryParse(entryController.text)!).toStringAsFixed(toStringAsFixed)}    $toStringAsFixed");
+                              toStringAsFixed -= 1;
+                              if (result == "success") {
+                                _showSuccessDialog(context);
+                              } else if (result == "failure") {
+                                _showFailureDialog(context);
+                              }
                             }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.blue.withOpacity(0.5),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(paddingSize(16.0)),
-                          child: Text(
-                              'Execute Trade',
-                            style: TextStyle(fontSize: fontSize(16), color: Colors.white.withOpacity(0.9)),
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.blue.withOpacity(0.5),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(paddingSize(16.0)),
+                            child: Text(
+                                'Execute Trade',
+                              style: TextStyle(fontSize: fontSize(16), color: Colors.white.withOpacity(0.9)),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const AssetsPage()),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1), // Background color
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.blue.withOpacity(0.08),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: const Offset(0, 3), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      margin: EdgeInsets.only(top: paddingSize(20)),
-                      padding: EdgeInsets.symmetric(
-                          vertical: paddingSize(20.0), horizontal: paddingSize(40.0)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Total Balance: ',
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: fontSize(14.0),
-                                  fontWeight: FontWeight.bold,
+                      ],
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AssetsPage()),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.1), // Background color
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.blue.withOpacity(0.08),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: const Offset(0, 3), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        margin: EdgeInsets.only(top: paddingSize(20)),
+                        padding: EdgeInsets.symmetric(
+                            vertical: paddingSize(20.0), horizontal: paddingSize(40.0)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Total Balance: ',
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: fontSize(14.0),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                'Available for Trading: ',
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: fontSize(14.0),
-                                  fontWeight: FontWeight.bold,
+                                Text(
+                                  'Available for Trading: ',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: fontSize(14.0),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${totalBalance.toStringAsFixed(2)} USD',
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: fontSize(14.0),
-                                  fontWeight: FontWeight.bold,
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${totalBalance.toStringAsFixed(2)} USD',
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: fontSize(14.0),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                '${freeBalance.toStringAsFixed(2)} USDT',
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: fontSize(14.0),
-                                  fontWeight: FontWeight.bold,
+                                Text(
+                                  '${freeBalance.toStringAsFixed(2)} USDT',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: fontSize(14.0),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
