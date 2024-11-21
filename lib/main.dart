@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:autotrade/services/trade_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:autotrade/pages/login_page.dart';
 import 'package:autotrade/pages/trade_page.dart';
@@ -42,7 +45,7 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
       future: checkLoginStatus(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Or some loading indicator
+          return  Container(color: Colors.white,child: const Center(child: CircularProgressIndicator()),); // Or some loading indicator
         } else {
           if (snapshot.data == true) {
             return const TradePage(balance: {},); // Navigate to trade page if logged in
@@ -56,6 +59,9 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
 
   Future<bool> checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
+    Map<String,String> coinImages = await fetchCoinImages ();
+    String encodedMap = json.encode(coinImages);
+    await prefs.setString('coinImages', encodedMap);
     final apiKey = prefs.getString('api_key');
     final apiSecret = prefs.getString('api_secret');
     return apiKey != null && apiSecret != null;

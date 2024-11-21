@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:autotrade/services/trade_logic.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AssetsPage extends StatefulWidget {
   const AssetsPage({super.key});
@@ -14,6 +16,7 @@ class _AssetsPageState extends State<AssetsPage> {
   Map<String, double> assets = {};
   Map<String, double> originalAssets = {};
   Map<String, double> prices = {};
+  Map<String, dynamic> coinImages = {};
   bool isLoading = false;
 
   @override
@@ -28,6 +31,11 @@ class _AssetsPageState extends State<AssetsPage> {
     });
 
     try {
+
+      final prefs = await SharedPreferences.getInstance();
+      String encodedMap = prefs.getString('coinImages')!;
+      coinImages = json.decode(encodedMap) ;
+
       Map<String, double> fetchedBalances = await fetchBalances();
       prices = await fetchAssetPricesInUSDT();
 
@@ -59,7 +67,8 @@ class _AssetsPageState extends State<AssetsPage> {
     final filteredAssets =
         assets.entries.where((entry) => entry.value > 0).toList();
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = kIsWeb? screenHeight/2 : MediaQuery.of(context).size.width;
+    final double screenWidth =
+    kIsWeb ? screenHeight / 2 : MediaQuery.of(context).size.width;
 
     double fontSize(double size) {
       return size * screenWidth / 375; // Assuming 375 is the base width
@@ -71,13 +80,15 @@ class _AssetsPageState extends State<AssetsPage> {
 
     return Center(
       child: SizedBox(
-        width:screenWidth,
+        width: screenWidth,
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.grey.withOpacity(0.1),
-            title: Center(child: Text('Assets',style: TextStyle(
-                fontSize: fontSize(22),
-                color: Colors.black),)),
+            title: Center(
+                child: Text(
+                  'Assets',
+                  style: TextStyle(fontSize: fontSize(22), color: Colors.black),
+                )),
             actions: [
               IconButton(
                 icon: const Icon(Icons.refresh),
@@ -87,101 +98,115 @@ class _AssetsPageState extends State<AssetsPage> {
           ),
           body: isLoading
               ? const Center(
-                  child: CircularProgressIndicator(),
-                )
+            child: CircularProgressIndicator(),
+          )
               : Container(
-                height: screenHeight,
-                width: screenWidth,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.grey.withOpacity(0.1),
-                      Colors.blue.withOpacity(0.1)
+            height: screenHeight,
+            width: screenWidth,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.grey.withOpacity(0.1),
+                  Colors.blue.withOpacity(0.1)
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Scrollbar(
+              scrollbarOrientation: ScrollbarOrientation.left,
+              thumbVisibility: true,
+              child: SingleChildScrollView(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columnSpacing: paddingSize(25),
+                    columns: const [
+                      DataColumn(label: Text('')),
+                      DataColumn(label: Text('Coin')),
+                      DataColumn(label: Text('Price')),
+                      DataColumn(label: Text('Balance')),
                     ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Scrollbar(
-                  scrollbarOrientation: ScrollbarOrientation.left,
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columnSpacing: paddingSize(15),
-                        columns: const [
-                          DataColumn(label: Text('Coin')),
-                          DataColumn(label: Text('Balance')),
-                          DataColumn(label: Text('Price')),
-                          DataColumn(label: Text('Value \$')),
-                        ],
-                        rows: filteredAssets.map((asset) {
-                          print(asset.key);
-                          final symbol = asset.key != 'USDT'
-                              ? prices[asset.key]! > 0.001
-                                  ? asset.key
-                                  : "1000${asset.key}"
-                              : asset.key;
-                          final balance =
-                              double.tryParse(originalAssets[asset.key]!.toStringAsFixed(4)).toString() ?? '';
-                          final price = asset.key == 'USDT'
-                              ? '1.0'
-                              : double.tryParse(((prices[asset.key]! > 0.001
-                                          ? prices[asset.key]
-                                          : prices[asset.key]! * 1000) ??
-                                      0.0)
-                                  .toStringAsFixed(4)).toString();
-                          final value = asset.value.toStringAsFixed(2);
+                    rows: filteredAssets.map((asset) {
+                      final symbol = asset.key != 'USDT'
+                          ? prices[asset.key]! > 0.001
+                          ? asset.key
+                          : "1000${asset.key}"
+                          : asset.key;
+                      final balance =
+                      double.tryParse(originalAssets[asset.key]!
+                          .toStringAsFixed(4))
+                          .toString();
+                      final price = asset.key == 'USDT'
+                          ? '1.0'
+                          : double.tryParse(((prices[asset.key]! > 0.001
+                          ? prices[asset.key]
+                          : prices[asset.key]! * 1000) ??
+                          0.0)
+                          .toStringAsFixed(4))
+                          .toString();
+                      final logoUrl =
+                          // 'https://crypto-icons.com/${asset.key.toLowerCase()}.png'; // Replace with the actual logo service
+                      // "https://cryptologos.cc/logos/thumbs/${asset.key.toLowerCase()}.png";
+                      coinImages[asset.key.toLowerCase()];
 
-                          return DataRow(
-                            cells: [
-                              DataCell(
+                      return DataRow(
+                        cells: [
+                          DataCell(
+                            Image.network(
+                              logoUrl??"https://raw.githubusercontent.com/Cryptofonts/cryptoicons/refs/heads/master/32/${asset.key.toLowerCase()}.png",
+                              width: 32,
+                              height: 32,
+                              errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.circle_outlined, size: 32),
+                            ),
+                          ),
+                          DataCell(
+                            Text(
+                              symbol,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: fontSize(15),
+                                  color: Colors.black),
+                            ),
+                          ),
+                          DataCell(
+                            Text(
+                              price,
+                              style: TextStyle(
+                                  fontSize: fontSize(16),
+                                  color: Colors.black),
+                            ),
+                          ),
+                          DataCell(
+                            Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
                                 Text(
-                                  symbol,
+                                  "\$${asset.value.toStringAsFixed(2)}",
                                   style: TextStyle(
-                                      fontSize: fontSize(16),
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.blue),
-                                  overflow: TextOverflow.ellipsis,
+                                      fontSize: fontSize(16),
+                                      color: Colors.green),
                                 ),
-                              ),
-                              DataCell(
                                 Text(
                                   balance,
                                   style: TextStyle(
-                                      fontSize: fontSize(16),
+                                      fontSize: fontSize(14),
                                       color: Colors.black),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                              DataCell(
-                                Text(
-                                  price,
-                                  style: TextStyle(
-                                      fontSize: fontSize(16),
-                                      color: Colors.black),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              DataCell(
-                                Text(
-                                  value,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                      fontSize: fontSize(16),
-                                      color: Colors.green),
-                                  overflow: TextOverflow.clip,
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                    ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }).toList(),
                   ),
                 ),
               ),
+            ),
+          ),
         ),
       ),
     );

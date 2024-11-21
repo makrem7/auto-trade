@@ -31,7 +31,38 @@ Future<Map<String, double>> fetchAssetPricesInUSDT() async {
   }
 }
 
-// Function to fetch balances from the Binance API
+Future<Map<String, String>> fetchCoinImages() async {
+  Map<String, String> symbolToImageMap = {};
+
+  // Step 1: Call CoinGecko's API to get all coins (you can limit it if needed)
+  final url = Uri.parse('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd');
+
+  try {
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+
+      // Step 2: Filter through the returned data and map symbols to images
+      for (var coin in data) {
+        String symbol = coin['symbol'];
+        String imageUrl = coin['image'];  // Get the image URL from CoinGecko
+
+        symbolToImageMap[symbol] = imageUrl;
+      }
+
+      return symbolToImageMap;
+    } else {
+      print('Failed to load coin images');
+      return {};
+    }
+  } catch (e) {
+    print('Error occurred: $e');
+    return {};
+  }
+}
+
+// om the Binance API
 Future<Map<String, double>> fetchBalances() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final String? apiKey = prefs.getString('api_key');
@@ -59,12 +90,16 @@ Future<Map<String, double>> fetchBalances() async {
 
       // Parse the response and extract balances
       Map<String, double> balances = {};
+      List<String> coins = [];
       for (var asset in responseData['balances']) {
         final String symbol = asset['asset'];
         final double free = double.parse(asset['free']);
         final double locked = double.parse(asset['locked']);
         final double totalBalance = free + locked;
-        balances[symbol] = totalBalance;
+        if (totalBalance!=0){
+          balances[symbol] = totalBalance;
+          coins+=[symbol.toLowerCase()];
+        }
       }
 
       return balances;
