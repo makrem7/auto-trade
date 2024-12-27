@@ -59,9 +59,6 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
 
   Future<bool> checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    Map<String,String> coinImages = await fetchCoinImages ();
-    String encodedMap = json.encode(coinImages);
-    await prefs.setString('coinImages', encodedMap);
     final apiKey = prefs.getString('api_key');
     final apiSecret = prefs.getString('api_secret');
     return apiKey != null && apiSecret != null;

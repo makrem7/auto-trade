@@ -16,7 +16,6 @@ class _AssetsPageState extends State<AssetsPage> {
   Map<String, double> assets = {};
   Map<String, double> originalAssets = {};
   Map<String, double> prices = {};
-  Map<String, dynamic> coinImages = {};
   bool isLoading = false;
 
   @override
@@ -31,10 +30,6 @@ class _AssetsPageState extends State<AssetsPage> {
     });
 
     try {
-
-      final prefs = await SharedPreferences.getInstance();
-      String encodedMap = prefs.getString('coinImages')!;
-      coinImages = json.decode(encodedMap) ;
 
       Map<String, double> fetchedBalances = await fetchBalances();
       prices = await fetchAssetPricesInUSDT();
@@ -146,15 +141,15 @@ class _AssetsPageState extends State<AssetsPage> {
                           .toStringAsFixed(4))
                           .toString();
                       final logoUrl =
-                          // 'https://crypto-icons.com/${asset.key.toLowerCase()}.png'; // Replace with the actual logo service
+                          'https://raw.githubusercontent.com/makrem7/coin-logos-scraping/refs/heads/main/logos/${asset.key.toUpperCase()}.png'; // Replace with the actual logo service
                       // "https://cryptologos.cc/logos/thumbs/${asset.key.toLowerCase()}.png";
-                      coinImages[asset.key.toLowerCase()];
+                      // coinImages[asset.key.toLowerCase()];
 
                       return DataRow(
                         cells: [
                           DataCell(
                             Image.network(
-                              logoUrl??"https://raw.githubusercontent.com/Cryptofonts/cryptoicons/refs/heads/master/32/${asset.key.toLowerCase()}.png",
+                              logoUrl??"https://raw.githubusercontent.com/makrem7/coin-logos-scraping/refs/heads/main/logos/${asset.key.toLowerCase()}.png",
                               width: 32,
                               height: 32,
                               errorBuilder: (context, error, stackTrace) =>
