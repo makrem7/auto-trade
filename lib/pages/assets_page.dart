@@ -78,6 +78,11 @@ class _AssetsPageState extends State<AssetsPage> {
         width: screenWidth,
         child: Scaffold(
           appBar: AppBar(
+            toolbarHeight: paddingSize(50),
+            leading: IconButton(
+              icon:  Icon(Icons.arrow_back, size: fontSize(22),),
+              onPressed: () => Navigator.pop(context),
+            ),
             backgroundColor: Colors.grey.withOpacity(0.1),
             title: Center(
                 child: Text(
@@ -86,13 +91,13 @@ class _AssetsPageState extends State<AssetsPage> {
                 )),
             actions: [
               IconButton(
-                icon: const Icon(Icons.refresh),
+                icon:  Icon(Icons.refresh, size: fontSize(22),),
                 onPressed: fetchAssets,
               ),
             ],
           ),
           body: isLoading
-              ? const Center(
+              ?  const Center(
             child: CircularProgressIndicator(),
           )
               : Container(
@@ -115,12 +120,21 @@ class _AssetsPageState extends State<AssetsPage> {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
-                    columnSpacing: paddingSize(25),
-                    columns: const [
-                      DataColumn(label: Text('')),
-                      DataColumn(label: Text('Coin')),
-                      DataColumn(label: Text('Price')),
-                      DataColumn(label: Text('Balance')),
+                    dataRowHeight: fontSize(40),
+                    columnSpacing: paddingSize(15),
+                    columns:  [
+                      DataColumn(label: Text('',style: TextStyle(
+                          fontSize: fontSize(16),
+                          color: Colors.black),)),
+                      DataColumn(label: Text('Coin',style: TextStyle(
+                          fontSize: fontSize(16),
+                          color: Colors.black),)),
+                      DataColumn(label: Text('Price',style: TextStyle(
+                          fontSize: fontSize(16),
+                          color: Colors.black),)),
+                      DataColumn(label: Text('Balance',style: TextStyle(
+                          fontSize: fontSize(16),
+                          color: Colors.black),)),
                     ],
                     rows: filteredAssets.map((asset) {
                       final symbol = asset.key != 'USDT'
@@ -141,7 +155,8 @@ class _AssetsPageState extends State<AssetsPage> {
                           .toStringAsFixed(4))
                           .toString();
                       final logoUrl =
-                          'https://raw.githubusercontent.com/makrem7/coin-logos-scraping/refs/heads/main/logos/${asset.key.toUpperCase()}.png'; // Replace with the actual logo service
+                          // 'https://raw.githubusercontent.com/makrem7/coin-logos-scraping/refs/heads/main/logos/${asset.key.toUpperCase()}.png'; // Replace with the actual logo service
+                          'https://bin.bnbstatic.com/static/assets/logos/${asset.key.toUpperCase()}.png'; // Replace with the actual logo service
                       // "https://cryptologos.cc/logos/thumbs/${asset.key.toLowerCase()}.png";
                       // coinImages[asset.key.toLowerCase()];
 
@@ -150,10 +165,9 @@ class _AssetsPageState extends State<AssetsPage> {
                           DataCell(
                             Image.network(
                               logoUrl??"https://raw.githubusercontent.com/makrem7/coin-logos-scraping/refs/heads/main/logos/${asset.key.toLowerCase()}.png",
-                              width: 32,
-                              height: 32,
-                              errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.circle_outlined, size: 32),
+                              width: fontSize(28),
+                              height: fontSize(28),
+                              errorBuilder: (context, error, stackTrace) => Icon(Icons.circle_outlined, size: fontSize(28)),
                             ),
                           ),
                           DataCell(
@@ -182,13 +196,13 @@ class _AssetsPageState extends State<AssetsPage> {
                                   "\$${asset.value.toStringAsFixed(2)}",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: fontSize(16),
+                                      fontSize: fontSize(14),
                                       color: Colors.green),
                                 ),
                                 Text(
                                   balance,
                                   style: TextStyle(
-                                      fontSize: fontSize(14),
+                                      fontSize: fontSize(12),
                                       color: Colors.black),
                                 ),
                               ],
