@@ -4,10 +4,12 @@ AutoTrade is a Flutter application designed to streamline the process of executi
 
 ## Screenshots
 
-![Screenshot 1](images/1.png)
-![Screenshot 2](images/2.png)
-![Screenshot 3](images/3.png)
-![Screenshot 4](images/4.png)
+<div style="display: flex; flex-direction: row;">
+  <img src="images/1.png" alt="Screenshot 1" style="width: 24%; margin-right: 1%;">
+  <img src="images/2.png" alt="Screenshot 2" style="width: 24%; margin-right: 1%;">
+  <img src="images/3.png" alt="Screenshot 3" style="width: 24%; margin-right: 1%;">
+  <img src="images/4.png" alt="Screenshot 4" style="width: 24%;">
+</div>
 
 ## Features
 
